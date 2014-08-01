@@ -1,8 +1,11 @@
-var stars = {
-  positions: [],
-  size: 1,
-  color: '#999',
+var Stars = function() {
+  this.positions = [];
+  this.size = 2;
+  this.color = '#999';
+  this.spawn(50);
+};
 
+Stars.prototype = {
   spawn: function(num) {
     this.positions = [];
     for(var i = 0; i < num; i++) {
@@ -10,7 +13,7 @@ var stars = {
     }
   },
 
-  draw: function() {
+  draw: function(context) {
     context.save();
     context.fillStyle = this.color;
     for (var i = this.positions.length - 1; i >= 0; i--) {

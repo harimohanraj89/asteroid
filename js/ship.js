@@ -1,25 +1,23 @@
-var ship = {
-  position: { x: 0, y: 0 },
-  speed: 0,
-  velocity: {
-    x: 0,
-    y: 0
-  },
-  angle: 90,
-  thrust: false,
-  thrustPower: 1000,
-  rotRight: false,
-  rotLeft: false,
-  rotPower: 2.5,
+var Ship = function() {
+  this.position = { x: 0, y: 0 };
+  this.speed = 0;
+  this.velocity = { x: 0, y: 0 };
+  this.angle = 90;
+  this.thrust = false;
+  this.thrustPower = 1200;
+  this.rotRight = false;
+  this.rotLeft = false;
+  this.rotPower = 3;
+  this.flame = false;
+  this.flameCount = 0;
+  this.flameMaxCount = 3;
+  this.firstFlame = false;
+  this.colors = ['#fff', '#c00', '#e81'];
+  this.size = 2;
 
-  flame: false,
-  flameCount: 0,
-  flameMaxCount: 3,
-  firstFlame: false,
+};
 
-  colors: ['#fff', '#c00', '#e81'],
-  size: 2,
-
+Ship.prototype = {
   thrustOn: function() {
     if (!this.thrust) {
       this.flameCount = 0;
@@ -48,6 +46,13 @@ var ship = {
     this.rotLeft = false;
   },
 
+  gunPosition: function() {
+    return {
+      x: this.position.x + Math.cos(PI * this.angle / 180),
+      y: this.position.y - Math.sin(PI * this.angle / 180)
+    }
+  },
+
   wrap: function() {
     while (this.position.x > GWIDTH/2) this.position.x -= GWIDTH;
     while (this.position.x < -GWIDTH/2) this.position.x += GWIDTH;
@@ -71,37 +76,46 @@ var ship = {
     this.wrap();
   },
 
-  draw: function() {
+  draw: function(context) {
     var cPosition = canvasCoords(this.position);
     context.save();
     context.translate(cPosition.x, cPosition.y);
     context.rotate(-PI * this.angle / 180);
-    this.drawBody();
-    this.drawHead();
-    this.drawFlame();
+    this.drawBody(context);
+    // this.drawHead(context);
+    this.drawFlame(context);
     context.restore();
   },
 
-  drawBody: function() {
+  drawBody: function(context) {
     var cSize = C * this.size;
     context.fillStyle = this.colors[0];
-    context.fillRect(-cSize/2, -cSize/2, cSize, cSize);
+    context.beginPath();
+    context.moveTo(cSize/2, 0);
+    context.lineTo(-cSize/2, cSize/2);
+    context.lineTo(-cSize/4, 0);
+    context.lineTo(-cSize/2, -cSize/2);
+    context.fill();
+    // context.fillRect(-cSize/2, -cSize/2, cSize, cSize);
   },
 
-  drawHead: function() {
+  drawHead: function(context) {
     var cSize = C * this.size;
     context.fillStyle = this.colors[1];
-    context.fillRect(cSize/2, -cSize/8, cSize/4, cSize/4);
+    context.fillRect(cSize/2 - cSize/8, -cSize/8, cSize/4, cSize/4);
   },
 
-  drawFlame: function() {
+  drawFlame: function(context) {
     if ((this.flame && this.thrust) || this.firstFlame) {
       var cSize = C * this.size;
       context.fillStyle = this.colors[2];
       context.beginPath();
       context.moveTo(-cSize/2, cSize/2);
-      context.lineTo(-cSize, 0);
+      context.lineTo(-cSize, cSize/4);
+      context.lineTo(-cSize/2 - cSize/6, 0);
+      context.lineTo(-cSize, -cSize/4);
       context.lineTo(-cSize/2, -cSize/2);
+      context.lineTo(-cSize/4, 0);
       context.fill();
 
     }
