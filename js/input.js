@@ -3,88 +3,26 @@ function initInput() {
   window.addEventListener('keyup', keyup);
 }
 
-function keydown(e) {
-  console.log(e.which);
-  switch(e.which) {
-  case 87: // w
-  case 38: // up
-    upPress();
-    e.preventDefault();
-    break;
-  case 65: // a
-  case 37: // left
-    leftPress();
-    e.preventDefault();
-    break;
-  case 83: // s
-  case 40: // down
-    // down();
-    e.preventDefault();
-    break;
-  case 68: // d
-  case 39: // right
-    rightPress();
-    e.preventDefault();
-    break;
-  case 32: // space
-    console.log('shoot');
-    e.preventDefault();
-    break;
+var eventmap = {
+  87: 'up',
+  38: 'up',
+  65: 'left',
+  37: 'left',
+  83: 'down',
+  40: 'down',
+  68: 'right',
+  39: 'right',
+  32: 'shoot',
+}
 
+function keydown(e) {
+  if (eventmap[e.which]) {
+    window.dispatchEvent(new Event(eventmap[e.which] + 'Press'));
   }
 }
 
 function keyup(e) {
-  console.log(e.which);
-  switch(e.which) {
-  case 87: // w
-  case 38: // up
-    upRelease();
-    e.preventDefault();
-    break;
-  case 65: // a
-  case 37: // left
-    leftRelease();
-    e.preventDefault();
-    break;
-  case 83: // s
-  case 40: // down
-    // down();
-    e.preventDefault();
-    break;
-  case 68: // d
-  case 39: // right
-    rightRelease();
-    e.preventDefault();
-    break;
-  case 32: // space
-    console.log('shoot');
-    e.preventDefault();
-    break;
-
+  if (eventmap[e.which]) {
+    window.dispatchEvent(new Event(eventmap[e.which] + 'Release'));
   }
-}
-
-function upPress() {
-  ship.thrustOn();
-}
-
-function leftPress() {
-  ship.rotLeftOn();
-}
-
-function rightPress() {
-  ship.rotRightOn();
-}
-
-function upRelease() {
-  ship.thrustOff();
-}
-
-function leftRelease() {
-  ship.rotLeftOff();
-}
-
-function rightRelease() {
-  ship.rotRightOff();
 }
