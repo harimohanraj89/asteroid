@@ -1,6 +1,6 @@
 var Bullet = function(position, angle) {
   this.position = { x: position.x, y: position.y };
-  this.speed = 400;
+  this.speed = 50;
   this.velocity = this.setVel(angle);
   this.size = 0.5;
   this.color = '#fff';
@@ -14,19 +14,18 @@ Bullet.prototype = {
     while (this.position.y < -GHEIGHT/2) this.position.y += GHEIGHT;
   },
 
-  update: function() {
-    this.position.x += this.velocity.x * DT;
-    this.position.y += this.velocity.y * DT;
-    console.log(this.position);
+  update: function(dt) {
+    this.position.x += this.velocity.x * dt / 1000;
+    this.position.y += this.velocity.y * dt / 1000;
     this.wrap();
   },
 
   draw: function(context) {
-    var cPosition = canvasCoords(this.position);
+    var cPosition = displayCoords(this.position);
     var cSize = C * this.size;
     context.save();
     context.fillStyle = this.color;
-    context.fillRect(cPosition.x, cPosition.y, cSize, cSize);
+    context.fillRect(cPosition.x - cSize/2, cPosition.y - cSize/2, cSize, cSize);
     context.restore();
   },
 

@@ -17,7 +17,7 @@ Stars.prototype = {
     context.save();
     context.fillStyle = this.color;
     for (var i = this.positions.length - 1; i >= 0; i--) {
-      var cPosition = canvasCoords(this.positions[i]);
+      var cPosition = displayCoords(this.positions[i]);
       context.fillRect(cPosition.x, cPosition.y, this.size, this.size);
     }
     context.restore();

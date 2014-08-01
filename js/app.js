@@ -6,9 +6,7 @@ window.onload = function() {
   canvas.width = CWIDTH;
   canvas.height = CHEIGHT;
 
-  initInput();
-
-  var game = new Game(context);
+  var game = new Game(context, new KeyboardInputManager());
   window.requestAnimationFrame(function() {
     game.tick();
   });

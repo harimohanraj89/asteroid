@@ -2,9 +2,10 @@ var Ship = function() {
   this.position = { x: 0, y: 0 };
   this.speed = 0;
   this.velocity = { x: 0, y: 0 };
+  this.maxSpeed = 40;
   this.angle = 90;
   this.thrust = false;
-  this.thrustPower = 1200;
+  this.thrustPower = 20;
   this.rotRight = false;
   this.rotLeft = false;
   this.rotPower = 3;
@@ -53,36 +54,42 @@ Ship.prototype = {
     }
   },
 
-  wrap: function() {
+  wrapPosition: function() {
     while (this.position.x > GWIDTH/2) this.position.x -= GWIDTH;
     while (this.position.x < -GWIDTH/2) this.position.x += GWIDTH;
     while (this.position.y > GHEIGHT/2) this.position.y -= GHEIGHT;
     while (this.position.y < -GHEIGHT/2) this.position.y += GHEIGHT;
   },
 
-  update: function() {
-    this.position.x += this.velocity.x * DT;
-    this.position.y += this.velocity.y * DT;
+  limitVelocity: function() {
+    var speed = Math.sqrt(this.velocity.x * this.velocity.x + this.velocity.y * this.velocity.y);
+    if (speed > this.maxSpeed) {
+      this.velocity.x *= this.maxSpeed / speed;
+      this.velocity.y *= this.maxSpeed / speed;
+    }
+  },
 
+  update: function(dt) {
+    this.position.x += this.velocity.x * dt / 1000;
+    this.position.y += this.velocity.y * dt / 1000;
 
     if (this.thrust) {
-      this.velocity.x += this.thrustPower * Math.cos(PI * this.angle / 180) * DT;
-      this.velocity.y -= this.thrustPower * Math.sin(PI * this.angle / 180) * DT;
-      console.log(this.velocity);
+      this.velocity.x += this.thrustPower * Math.cos(PI * this.angle / 180) * dt / 1000;
+      this.velocity.y -= this.thrustPower * Math.sin(PI * this.angle / 180) * dt / 1000;
     }
     if (this.rotLeft) this.angle += this.rotPower;
     if (this.rotRight) this.angle -= this.rotPower;
 
-    this.wrap();
+    this.limitVelocity();
+    this.wrapPosition();
   },
 
   draw: function(context) {
-    var cPosition = canvasCoords(this.position);
+    var cPosition = displayCoords(this.position);
     context.save();
     context.translate(cPosition.x, cPosition.y);
     context.rotate(-PI * this.angle / 180);
     this.drawBody(context);
-    // this.drawHead(context);
     this.drawFlame(context);
     context.restore();
   },
@@ -96,7 +103,6 @@ Ship.prototype = {
     context.lineTo(-cSize/4, 0);
     context.lineTo(-cSize/2, -cSize/2);
     context.fill();
-    // context.fillRect(-cSize/2, -cSize/2, cSize, cSize);
   },
 
   drawHead: function(context) {
