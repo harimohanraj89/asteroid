@@ -54,11 +54,11 @@ Ship.prototype = {
     }
   },
 
-  wrapPosition: function() {
-    while (this.position.x > GWIDTH/2) this.position.x -= GWIDTH;
-    while (this.position.x < -GWIDTH/2) this.position.x += GWIDTH;
-    while (this.position.y > GHEIGHT/2) this.position.y -= GHEIGHT;
-    while (this.position.y < -GHEIGHT/2) this.position.y += GHEIGHT;
+  wrapPosition: function(width, height) {
+    while (this.position.x > width/2) this.position.x -= width;
+    while (this.position.x < -width/2) this.position.x += width;
+    while (this.position.y > height/2) this.position.y -= height;
+    while (this.position.y < -height/2) this.position.y += height;
   },
 
   limitVelocity: function() {
@@ -82,53 +82,5 @@ Ship.prototype = {
 
     this.limitVelocity();
     this.wrapPosition();
-  },
-
-  draw: function(context) {
-    var cPosition = displayCoords(this.position);
-    context.save();
-    context.translate(cPosition.x, cPosition.y);
-    context.rotate(-PI * this.angle / 180);
-    this.drawBody(context);
-    this.drawFlame(context);
-    context.restore();
-  },
-
-  drawBody: function(context) {
-    var cSize = C * this.size;
-    context.fillStyle = this.colors[0];
-    context.beginPath();
-    context.moveTo(cSize/2, 0);
-    context.lineTo(-cSize/2, cSize/2);
-    context.lineTo(-cSize/4, 0);
-    context.lineTo(-cSize/2, -cSize/2);
-    context.fill();
-  },
-
-  drawHead: function(context) {
-    var cSize = C * this.size;
-    context.fillStyle = this.colors[1];
-    context.fillRect(cSize/2 - cSize/8, -cSize/8, cSize/4, cSize/4);
-  },
-
-  drawFlame: function(context) {
-    if ((this.flame && this.thrust) || this.firstFlame) {
-      var cSize = C * this.size;
-      context.fillStyle = this.colors[2];
-      context.beginPath();
-      context.moveTo(-cSize/2, cSize/2);
-      context.lineTo(-cSize, cSize/4);
-      context.lineTo(-cSize/2 - cSize/6, 0);
-      context.lineTo(-cSize, -cSize/4);
-      context.lineTo(-cSize/2, -cSize/2);
-      context.lineTo(-cSize/4, 0);
-      context.fill();
-
-    }
-    if (++this.flameCount > this.flameMaxCount) {
-      this.flameCount = 0;
-      this.flame = !this.flame;
-      this.firstFlame = false;
-    }
   }
 }

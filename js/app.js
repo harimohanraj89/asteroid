@@ -1,12 +1,11 @@
+var PI = Math.PI || 3.14159265;
+
 window.onload = function() {
   console.log('Asteroid - A tribute');
 
   var canvas = document.getElementById('game-canvas');
-  var context = canvas.getContext('2d');
-  canvas.width = CWIDTH;
-  canvas.height = CHEIGHT;
 
-  var game = new Game(context, new KeyboardInputManager());
+  var game = new Game(new KeyboardInputManager(), new CanvasActuator(canvas));
   window.requestAnimationFrame(function() {
     game.tick();
   });

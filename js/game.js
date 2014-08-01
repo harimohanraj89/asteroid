@@ -1,6 +1,9 @@
-var Game = function(context, inputMgr) {
-  this.context = context;
+var Game = function(inputMgr, actuator) {
   this.inputMgr = inputMgr;
+  this.actuator = actuator;
+
+  this.width = 100;
+  this.height = 75;
 
   this.ship = new Ship();
   this.stars = new Stars();
@@ -12,6 +15,8 @@ var Game = function(context, inputMgr) {
 
   this.inputMgr.init();
   this.listen();
+
+  this.stars.spawn(50, this.width, this.height);
 }
 
 Game.prototype = {
@@ -22,25 +27,26 @@ Game.prototype = {
     this.dt = step - this.t;
     this.dt = isNaN(this.dt) ? 0 : this.dt;
     this.t = step;
+
     this.update();
     this.draw();
-    window.requestAnimationFrame(this.tick.bind(this));
+    this.actuator.animate(this.tick.bind(this));
   },
 
   update: function() {
     this.ship.update(this.dt);
-    for (var i = this.bullets.length - 1; i >= 0; i--) {
-      this.bullets[i].update(this.dt);
-    }
+    // for (var i = this.bullets.length - 1; i >= 0; i--) {
+    //   this.bullets[i].update(this.dt);
+    // }
   },
 
   draw: function() {
-    this.context.fillRect(0, 0, displayScale(GWIDTH), displayScale(GHEIGHT));
-    this.stars.draw(this.context);
-    this.ship.draw(this.context);
-    for (var i = this.bullets.length - 1; i >= 0; i--) {
-      this.bullets[i].draw(this.context);
-    }
+    this.actuator.clearScreen();
+    // this.stars.draw(this.context);
+    this.actuator.drawShip(this.ship, this.width, this.height);
+    // for (var i = this.bullets.length - 1; i >= 0; i--) {
+      // this.bullets[i].draw(this.context);
+    // }
   },
 
   listen: function() {
