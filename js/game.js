@@ -34,19 +34,19 @@ Game.prototype = {
   },
 
   update: function() {
-    this.ship.update(this.dt);
-    // for (var i = this.bullets.length - 1; i >= 0; i--) {
-    //   this.bullets[i].update(this.dt);
-    // }
+    this.ship.update(this.dt, this.width, this.height);
+    for (var i = this.bullets.length - 1; i >= 0; i--) {
+      this.bullets[i].update(this.dt, this.width, this.height);
+    }
   },
 
   draw: function() {
     this.actuator.clearScreen();
-    // this.stars.draw(this.context);
+    this.actuator.drawStars(this.stars, this.width, this.height);
     this.actuator.drawShip(this.ship, this.width, this.height);
-    // for (var i = this.bullets.length - 1; i >= 0; i--) {
-      // this.bullets[i].draw(this.context);
-    // }
+    for (var i = this.bullets.length - 1; i >= 0; i--) {
+      this.actuator.drawBullet(this.bullets[i], this.width, this.height);
+    }
   },
 
   listen: function() {

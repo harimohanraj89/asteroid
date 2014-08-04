@@ -85,5 +85,26 @@ CanvasActuator.prototype = {
       ship.flame = !ship.flame;
       ship.firstFlame = false;
     }
+  },
+
+  drawStars: function(stars, width, height) {
+    var cPosition;
+    var cSize = this.C * stars.size;
+    this.context.save();
+    this.context.fillStyle = stars.color;
+    for (var i = stars.positions.length - 1; i >= 0; i--) {
+      cPosition = this.displayCoords(stars.positions[i], width, height);
+      this.context.fillRect(cPosition.x, cPosition.y, cSize, cSize);
+    }
+    this.context.restore();
+  },
+
+  drawBullet: function(bullet, width, height) {
+    var cPosition = this.displayCoords(bullet.position, width, height);
+    var cSize = this.C * bullet.size;
+    this.context.save();
+    this.context.fillStyle = bullet.color;
+    this.context.fillRect(cPosition.x, cPosition.y, cSize, cSize);
+    this.context.restore();
   }
 }

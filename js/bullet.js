@@ -7,26 +7,17 @@ var Bullet = function(position, angle) {
 }
 
 Bullet.prototype = {
-  wrap: function() {
-    while (this.position.x > GWIDTH/2) this.position.x -= GWIDTH;
-    while (this.position.x < -GWIDTH/2) this.position.x += GWIDTH;
-    while (this.position.y > GHEIGHT/2) this.position.y -= GHEIGHT;
-    while (this.position.y < -GHEIGHT/2) this.position.y += GHEIGHT;
+  wrapPosition: function(width, height) {
+    while (this.position.x > width/2) this.position.x -= width;
+    while (this.position.x < -width/2) this.position.x += width;
+    while (this.position.y > height/2) this.position.y -= height;
+    while (this.position.y < -height/2) this.position.y += height;
   },
 
-  update: function(dt) {
+  update: function(dt, width, height) {
     this.position.x += this.velocity.x * dt / 1000;
     this.position.y += this.velocity.y * dt / 1000;
-    this.wrap();
-  },
-
-  draw: function(context) {
-    var cPosition = displayCoords(this.position);
-    var cSize = C * this.size;
-    context.save();
-    context.fillStyle = this.color;
-    context.fillRect(cPosition.x - cSize/2, cPosition.y - cSize/2, cSize, cSize);
-    context.restore();
+    this.wrapPosition(width, height);
   },
 
   setVel: function(angle) {

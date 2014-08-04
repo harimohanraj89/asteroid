@@ -69,7 +69,7 @@ Ship.prototype = {
     }
   },
 
-  update: function(dt) {
+  update: function(dt, width, height) {
     this.position.x += this.velocity.x * dt / 1000;
     this.position.y += this.velocity.y * dt / 1000;
 
@@ -81,6 +81,6 @@ Ship.prototype = {
     if (this.rotRight) this.angle -= this.rotPower;
 
     this.limitVelocity();
-    this.wrapPosition();
+    this.wrapPosition(width, height);
   }
 }
