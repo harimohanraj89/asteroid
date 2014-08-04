@@ -104,7 +104,7 @@ CanvasActuator.prototype = {
     var cSize = this.C * bullet.size;
     this.context.save();
     this.context.fillStyle = bullet.color;
-    this.context.fillRect(cPosition.x, cPosition.y, cSize, cSize);
+    this.context.fillRect(cPosition.x - cSize/2, cPosition.y - cSize/2, cSize, cSize);
     this.context.restore();
   }
 }
