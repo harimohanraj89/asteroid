@@ -14,8 +14,8 @@ var Ship = function() {
   this.maxSpeed = 40;
   this.thrustPower = 20;
   this.rotPower = 3;
-  this.flameCount = 0;
-  this.flameMaxCount = 3;
+  this.flameTime = 0;
+  this.flameMaxTime = 0.07;
   this.cooldownMaxTime = 0.2;
   this.colors = ['#fff', '#c00', '#e81'];
   this.size = 2;
@@ -25,7 +25,7 @@ var Ship = function() {
 Ship.prototype = {
   thrustOn: function() {
     if (!this.thrust) {
-      this.flameCount = 0;
+      this.flameTime = 0;
       this.firstFlame = true;
     }
     this.thrust = true;
@@ -74,21 +74,45 @@ Ship.prototype = {
   },
 
   update: function(dt, width, height) {
+    this.updatePosition(dt);
+    this.updateVelocity(dt);
+    this.updateRotation(dt);
+    this.limitVelocity();
+    this.wrapPosition(width, height);
+    this.updateCooldown(dt);
+    this.updateFlame(dt);
+  },
+
+  updatePosition: function(dt) {
     this.position.x += this.velocity.x * dt / 1000;
     this.position.y += this.velocity.y * dt / 1000;
+  },
 
+  updateVelocity: function(dt) {
     if (this.thrust) {
       this.velocity.x += this.thrustPower * Math.cos(PI * this.angle / 180) * dt / 1000;
       this.velocity.y -= this.thrustPower * Math.sin(PI * this.angle / 180) * dt / 1000;
     }
+  },
+
+  updateRotation: function(dt) {
     if (this.rotLeft) this.angle += this.rotPower;
     if (this.rotRight) this.angle -= this.rotPower;
+  },
 
-    this.limitVelocity();
-    this.wrapPosition(width, height);
-
+  updateCooldown: function(dt) {
     this.cooldownTime = Math.max(this.cooldownTime - dt / 1000, 0);
   },
+
+  updateFlame: function(dt) {
+    this.flameTime += dt/1000;
+    if (this.flameTime > this.flameMaxTime) {
+      this.flameTime = 0;
+      this.flame = !this.flame;
+      this.firstFlame = false;
+    }
+  },
+
 
   fire: function() {
     if (this.cooldownTime === 0) {

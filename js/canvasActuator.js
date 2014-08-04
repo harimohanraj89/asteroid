@@ -80,11 +80,6 @@ CanvasActuator.prototype = {
       this.context.fill();
 
     }
-    if (++ship.flameCount > ship.flameMaxCount) {
-      ship.flameCount = 0;
-      ship.flame = !ship.flame;
-      ship.firstFlame = false;
-    }
   },
 
   drawStars: function(stars, width, height) {
