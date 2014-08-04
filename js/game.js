@@ -9,6 +9,7 @@ var Game = function(inputMgr, actuator) {
   this.stars = new Stars();
   this.bullets = [];
   this.maxBullets = 6;
+  this.shooting = false;
 
   this.t = null;
   this.dt = 0;
@@ -56,11 +57,22 @@ Game.prototype = {
     window.addEventListener('upRelease', this.ship.thrustOff.bind(this.ship));
     window.addEventListener('leftRelease', this.ship.rotLeftOff.bind(this.ship));
     window.addEventListener('rightRelease', this.ship.rotRightOff.bind(this.ship));
-    window.addEventListener('shootPress', this.fire.bind(this));
+    window.addEventListener('shootPress', this.shoot.bind(this));
+    window.addEventListener('shootRelease', (function() { this.shooting = false }).bind(this));
   },
 
-  fire: function() {
-    this.bullets.push(new Bullet(this.ship.gunPosition(), this.ship.angle));
+  shoot: function() {
+    if (!this.shooting) {
+      var bullet = this.ship.fire();
+      if (bullet) {
+        this.bullets.push(bullet);
+      }
+      this.limitBullets();
+      this.shooting = true;
+    }
+  },
+
+  limitBullets: function() {
     while (this.bullets.length > this.maxBullets) {
       this.bullets.shift();
     }

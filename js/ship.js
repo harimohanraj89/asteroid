@@ -2,17 +2,21 @@ var Ship = function() {
   this.position = { x: 0, y: 0 };
   this.speed = 0;
   this.velocity = { x: 0, y: 0 };
-  this.maxSpeed = 40;
   this.angle = 90;
   this.thrust = false;
-  this.thrustPower = 20;
   this.rotRight = false;
   this.rotLeft = false;
-  this.rotPower = 3;
   this.flame = false;
+  this.firstFlame = false;
+  this.bulletCooldown = false;
+  this.cooldownTime = 0;
+
+  this.maxSpeed = 40;
+  this.thrustPower = 20;
+  this.rotPower = 3;
   this.flameCount = 0;
   this.flameMaxCount = 3;
-  this.firstFlame = false;
+  this.cooldownMaxTime = 0.2;
   this.colors = ['#fff', '#c00', '#e81'];
   this.size = 2;
 
@@ -82,5 +86,20 @@ Ship.prototype = {
 
     this.limitVelocity();
     this.wrapPosition(width, height);
+
+    this.cooldownTime = Math.max(this.cooldownTime - dt / 1000, 0);
+  },
+
+  fire: function() {
+    if (this.cooldownTime === 0) {
+      this.startCooldown();
+      return new Bullet(this.gunPosition(), this.angle);
+    }
+    return null;
+  },
+
+  startCooldown: function() {
+    this.cooldownTime = this.cooldownMaxTime;
+    // console.log(this.cooldownTime);
   }
 }
