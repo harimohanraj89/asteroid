@@ -113,17 +113,15 @@ Ship.prototype = {
     }
   },
 
-
-  fire: function() {
+  fire: function(bulletId) {
     if (this.cooldownTime === 0) {
       this.startCooldown();
-      return new Bullet(this.gunPosition(), this.angle);
+      return new Bullet(this.gunPosition(), this.angle, bulletId);
     }
     return null;
   },
 
   startCooldown: function() {
     this.cooldownTime = this.cooldownMaxTime;
-    // console.log(this.cooldownTime);
   }
 }

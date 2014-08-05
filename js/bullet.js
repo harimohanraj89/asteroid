@@ -1,7 +1,11 @@
-var Bullet = function(position, angle) {
+var Bullet = function(position, angle, id) {
   this.position = { x: position.x, y: position.y };
   this.speed = 50;
   this.velocity = this.setVel(angle);
+  this.id = id;
+  this.distance = 0;
+
+  this.maxDistance = 80;
   this.size = 0.5;
   this.color = '#fff';
 }
@@ -15,9 +19,17 @@ Bullet.prototype = {
   },
 
   update: function(dt, width, height) {
-    this.position.x += this.velocity.x * dt / 1000;
-    this.position.y += this.velocity.y * dt / 1000;
+    var dx = this.velocity.x * dt / 1000;
+    var dy = this.velocity.y * dt / 1000;
+
+    this.position.x += dx;
+    this.position.y += dy;
     this.wrapPosition(width, height);
+
+    this.distance += Math.sqrt(dx*dx + dy*dy);
+    if (this.distance > this.maxDistance) {
+      this.die();
+    }
   },
 
   setVel: function(angle) {
@@ -25,5 +37,10 @@ Bullet.prototype = {
       x: this.speed * Math.cos(PI * angle / 180),
       y: -this.speed * Math.sin(PI * angle / 180)
     }
+  },
+
+  die: function() {
+    var bulletDeath = new CustomEvent('bulletDeath', { 'detail': this.id });
+    dispatchEvent(bulletDeath);
   }
 }
