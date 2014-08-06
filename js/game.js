@@ -5,7 +5,7 @@ var Game = function(inputMgr, actuator) {
   this.width = 100;
   this.height = 75;
 
-  this.ship = new Ship();
+  // this.ship = new Ship();
 
   this.stars = new Stars();
 
@@ -17,16 +17,19 @@ var Game = function(inputMgr, actuator) {
   this.asteroids = [];
   this.asteroidId = 0;
 
+  this.respawning = false;
+  this.respawnTime = 3;
   this.levelStarting = false;
   this.loadTime = 3;
 
   this.t = null;
   this.dt = 0;
 
+  this.spawnShip();
+  this.stars.spawn(50, this.width, this.height);
+
   this.inputMgr.init();
   this.listen();
-
-  this.stars.spawn(50, this.width, this.height);
 }
 
 Game.prototype = {
@@ -44,7 +47,9 @@ Game.prototype = {
   },
 
   update: function() {
-    this.ship.update(this.dt, this.width, this.height);
+    if (this.ship) {
+      this.ship.update(this.dt, this.width, this.height);
+    }
     for (var i = this.bullets.length - 1; i >= 0; i--) {
       this.bullets[i].update(this.dt, this.width, this.height);
     }
@@ -66,19 +71,31 @@ Game.prototype = {
   draw: function() {
     this.actuator.clearScreen();
     this.actuator.drawStars(this.stars, this.width, this.height);
-    this.actuator.drawShip(this.ship, this.width, this.height);
+
+    if (this.ship) {
+      this.actuator.drawShip(this.ship, this.width, this.height);
+    }
     for (var i = this.bullets.length - 1; i >= 0; i--) {
       this.actuator.drawBullet(this.bullets[i], this.width, this.height);
     }
     for (var i = this.asteroids.length - 1; i >= 0; i--) {
       this.actuator.drawAsteroid(this.asteroids[i], this.width, this.height);
     }
-    if (this.levelStarting) {
+    if (this.respawning) {
+      this.actuator.drawMessage('respawning');
+    } else if (this.levelStarting) {
       this.actuator.drawMessage('get ready');
     }
   },
 
   listen: function() {
+
+    this.shipListen();
+    window.addEventListener('bulletDeath', this.killBullet.bind(this));
+    window.addEventListener('asteroidDeath', this.killAsteroid.bind(this));
+  },
+
+  shipListen: function() {
     window.addEventListener('upPress', this.ship.thrustOn.bind(this.ship));
     window.addEventListener('leftPress', this.ship.rotLeftOn.bind(this.ship));
     window.addEventListener('rightPress', this.ship.rotRightOn.bind(this.ship));
@@ -87,9 +104,22 @@ Game.prototype = {
     window.addEventListener('rightRelease', this.ship.rotRightOff.bind(this.ship));
     window.addEventListener('shootPress', this.shoot.bind(this));
     window.addEventListener('shootRelease', (function() { this.shooting = false }).bind(this));
+  },
 
-    window.addEventListener('bulletDeath', this.killBullet.bind(this));
-    window.addEventListener('asteroidDeath', this.killAsteroid.bind(this));
+  spawnShip: function() {
+    this.ship = new Ship();
+    this.shipListen();
+    this.respawning = false;
+  },
+
+  killShip: function() {
+    this.ship = null;
+    this.respawnShip();
+  },
+
+  respawnShip: function() {
+    this.respawning = true;
+    setTimeout(this.spawnShip.bind(this), this.respawnTime * 1000);
   },
 
   shoot: function() {
@@ -146,14 +176,24 @@ Game.prototype = {
   },
 
   detectCollisions: function() {
-    for (var i in this.bullets) {
-      var bullet = this.bullets[i];
-      for (var j in this.asteroids) {
-        var asteroid = this.asteroids[j];
+    for (var i in this.asteroids) {
+      var asteroid = this.asteroids[i];
 
+      // Asteroids and bullets
+      for (var j in this.bullets) {
+        var bullet = this.bullets[j];
         if (Math.abs(bullet.position.x - asteroid.position.x) < asteroid.size/2
             && Math.abs(bullet.position.y - asteroid.position.y) < asteroid.size/2) {
           bullet.die();
+          asteroid.die();
+        }
+      }
+
+      // Asteroids and ship
+      if (this.ship) {
+        if (Math.abs(this.ship.position.x - asteroid.position.x) < asteroid.size/2
+            && Math.abs(this.ship.position.y - asteroid.position.y) < asteroid.size/2) {
+          this.killShip();
           asteroid.die();
         }
       }
