@@ -7,6 +7,8 @@ var CanvasActuator = function(canvas) {
   this.canvas.height = this.height;
   this.context = canvas.getContext('2d');
   this.bgColor = '#000';
+  this.font = 'Courier New';
+  this.fontSize = 48;
 
   window.requestAnimationFrame = window.requestAnimationFrame ||
                                  window.mozRequestAnimationFrame ||
@@ -100,6 +102,23 @@ CanvasActuator.prototype = {
     this.context.save();
     this.context.fillStyle = bullet.color;
     this.context.fillRect(cPosition.x - cSize/2, cPosition.y - cSize/2, cSize, cSize);
+    this.context.restore();
+  },
+
+  drawAsteroid: function(asteroid, width, height) {
+    var cPosition = this.displayCoords(asteroid.position, width, height);
+    var cSize = this.C * asteroid.size;
+    this.context.save();
+    this.context.fillStyle = asteroid.color;
+    this.context.fillRect(cPosition.x - cSize/2, cPosition.y - cSize/2, cSize, cSize);
+    this.context.restore();
+  },
+
+  drawMessage: function(text) {
+    this.context.save();
+    this.context.font = this.fontSize + 'px ' + this.font;
+    this.context.fillStyle = '#fff';
+    this.context.fillText(text, (this.width - this.context.measureText(text).width)/2, (this.height - this.fontSize)/2);
     this.context.restore();
   }
 }

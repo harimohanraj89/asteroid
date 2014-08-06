@@ -6,11 +6,19 @@ var Game = function(inputMgr, actuator) {
   this.height = 75;
 
   this.ship = new Ship();
+
   this.stars = new Stars();
+
   this.bullets = [];
   this.maxBullets = 6;
   this.bulletId = 0;
   this.shooting = false;
+
+  this.asteroids = [];
+  this.asteroidId = 0;
+
+  this.levelStarting = false;
+  this.loadTime = 3;
 
   this.t = null;
   this.dt = 0;
@@ -40,6 +48,19 @@ Game.prototype = {
     for (var i = this.bullets.length - 1; i >= 0; i--) {
       this.bullets[i].update(this.dt, this.width, this.height);
     }
+    for (var i = this.asteroids.length - 1; i >= 0; i--) {
+      this.asteroids[i].update(this.dt, this.width, this.height);
+    }
+
+    this.detectCollisions();
+
+    if (this.asteroids.length === 0 && !this.levelStarting) {
+      setTimeout((function() {
+        this.startLevel(3)
+      }).bind(this), this.loadTime * 1000);
+      this.levelStarting = true;
+    }
+
   },
 
   draw: function() {
@@ -48,6 +69,12 @@ Game.prototype = {
     this.actuator.drawShip(this.ship, this.width, this.height);
     for (var i = this.bullets.length - 1; i >= 0; i--) {
       this.actuator.drawBullet(this.bullets[i], this.width, this.height);
+    }
+    for (var i = this.asteroids.length - 1; i >= 0; i--) {
+      this.actuator.drawAsteroid(this.asteroids[i], this.width, this.height);
+    }
+    if (this.levelStarting) {
+      this.actuator.drawMessage('get ready');
     }
   },
 
@@ -62,6 +89,7 @@ Game.prototype = {
     window.addEventListener('shootRelease', (function() { this.shooting = false }).bind(this));
 
     window.addEventListener('bulletDeath', this.killBullet.bind(this));
+    window.addEventListener('asteroidDeath', this.killAsteroid.bind(this));
   },
 
   shoot: function() {
@@ -87,6 +115,49 @@ Game.prototype = {
       if (this.bullets[i].id === bulletId) {
         this.bullets.splice(i, 1);
         break;
+      }
+    }
+  },
+
+  spawnAsteroid: function(position, angle) {
+    this.asteroids.push(new Asteroid(position, angle, this.asteroidId++));
+  },
+
+  startLevel: function(num) {
+    this.levelStarting = false;
+    for (var i = 0; i < num; i++) {
+      var position = {
+        x: this.width/2,
+        y: Math.floor(this.height * (Math.random() - 0.5))
+      }
+      var angle = 360 * Math.random();
+      this.spawnAsteroid(position, angle);
+    }
+  },
+
+  killAsteroid: function(e) {
+    var asteroidId = e.detail;
+    for (var i = this.asteroids.length - 1; i >= 0; i--) {
+      if (this.asteroids[i].id === asteroidId) {
+        this.asteroids.splice(i, 1);
+        break;
+      }
+    }
+  },
+
+  detectCollisions: function() {
+    for (var i in this.bullets) {
+      var bullet = this.bullets[i];
+      for (var j in this.asteroids) {
+        var asteroid = this.asteroids[j];
+
+        if (Math.abs(bullet.position.x - asteroid.position.x) < asteroid.size/2
+            && Math.abs(bullet.position.y - asteroid.position.y) < asteroid.size/2) {
+          var bulletDeath = new CustomEvent('bulletDeath', {detail: bullet.id});
+          var asteroidDeath = new CustomEvent('asteroidDeath', {detail: asteroid.id});
+          dispatchEvent(bulletDeath);
+          dispatchEvent(asteroidDeath);
+        }
       }
     }
   }
