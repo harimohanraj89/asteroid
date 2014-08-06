@@ -153,10 +153,8 @@ Game.prototype = {
 
         if (Math.abs(bullet.position.x - asteroid.position.x) < asteroid.size/2
             && Math.abs(bullet.position.y - asteroid.position.y) < asteroid.size/2) {
-          var bulletDeath = new CustomEvent('bulletDeath', {detail: bullet.id});
-          var asteroidDeath = new CustomEvent('asteroidDeath', {detail: asteroid.id});
-          dispatchEvent(bulletDeath);
-          dispatchEvent(asteroidDeath);
+          bullet.die();
+          asteroid.die();
         }
       }
     }

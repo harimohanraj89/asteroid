@@ -30,5 +30,10 @@ Asteroid.prototype = {
       x: this.speed * Math.cos(PI * angle / 180),
       y: -this.speed * Math.sin(PI * angle / 180)
     }
+  },
+
+  die: function() {
+    var asteroidDeath = new CustomEvent('asteroidDeath', { 'detail': this.id });
+    dispatchEvent(asteroidDeath);
   }
 }
