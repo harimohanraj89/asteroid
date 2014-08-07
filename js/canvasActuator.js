@@ -8,7 +8,8 @@ var CanvasActuator = function(canvas) {
   this.context = canvas.getContext('2d');
   this.bgColor = '#000';
   this.font = 'Courier New';
-  this.fontSize = 48;
+  this.messageSize = 48;
+  this.hudSize = 16;
 
   window.requestAnimationFrame = window.requestAnimationFrame ||
                                  window.mozRequestAnimationFrame ||
@@ -116,9 +117,19 @@ CanvasActuator.prototype = {
 
   drawMessage: function(text) {
     this.context.save();
-    this.context.font = this.fontSize + 'px ' + this.font;
+    this.context.font = this.messageSize + 'px ' + this.font;
     this.context.fillStyle = '#fff';
-    this.context.fillText(text, (this.width - this.context.measureText(text).width)/2, (this.height - this.fontSize)/2);
+    this.context.fillText(text, (this.width - this.context.measureText(text).width)/2, (this.height - this.messageSize)/2);
+    this.context.restore();
+  },
+
+  drawHud: function(lives, score) {
+    lives = Math.max(lives, 0);
+    this.context.save();
+    this.context.font = this.hudSize + 'px ' + this.font;
+    this.context.fillStyle = '#fff';
+    this.context.fillText('Score: ' + score, 4, this.hudSize);
+    this.context.fillText('Lives: ' + lives, (this.width - this.context.measureText('Lives: ' + lives).width) - 4, this.hudSize);
     this.context.restore();
   }
 }

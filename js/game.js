@@ -5,8 +5,6 @@ var Game = function(inputMgr, actuator) {
   this.width = 100;
   this.height = 75;
 
-  // this.ship = new Ship();
-
   this.stars = new Stars();
 
   this.bullets = [];
@@ -16,16 +14,20 @@ var Game = function(inputMgr, actuator) {
 
   this.asteroids = [];
   this.asteroidId = 0;
+  this.asteroidScore = 1000;
 
   this.respawning = false;
   this.respawnTime = 3;
+  this.level = 0;
   this.levelStarting = false;
   this.loadTime = 3;
+
+  this.gameOver = false;
 
   this.t = null;
   this.dt = 0;
 
-  this.spawnShip();
+  this.newGame();
   this.stars.spawn(50, this.width, this.height);
 
   this.inputMgr.init();
@@ -60,8 +62,9 @@ Game.prototype = {
     this.detectCollisions();
 
     if (this.asteroids.length === 0 && !this.levelStarting) {
+      this.level++;
       setTimeout((function() {
-        this.startLevel(3)
+        this.startLevel(this.numAsteroids(this.level));
       }).bind(this), this.loadTime * 1000);
       this.levelStarting = true;
     }
@@ -81,11 +84,20 @@ Game.prototype = {
     for (var i = this.asteroids.length - 1; i >= 0; i--) {
       this.actuator.drawAsteroid(this.asteroids[i], this.width, this.height);
     }
-    if (this.respawning) {
+    this.actuator.drawHud(this.lives, this.score);
+    if (this.gameOver) {
+      this.actuator.drawMessage('game over');
+    } else if (this.respawning) {
       this.actuator.drawMessage('respawning');
     } else if (this.levelStarting) {
-      this.actuator.drawMessage('get ready');
+      this.actuator.drawMessage('level ' + this.level);
     }
+  },
+
+  newGame: function() {
+    this.spawnShip();
+    this.score = 0;
+    this.lives = 3;
   },
 
   listen: function() {
@@ -113,7 +125,12 @@ Game.prototype = {
 
   killShip: function() {
     this.ship = null;
-    this.respawnShip();
+    this.lives--;
+    if (this.lives >= 0) {
+      this.respawnShip();
+    } else {
+      this.gameOver = true;
+    }
   },
 
   respawnShip: function() {
@@ -169,6 +186,10 @@ Game.prototype = {
     }
   },
 
+  numAsteroids: function(level) {
+    return Math.min(level + 2, 8);
+  },
+
   detectCollisions: function() {
     for (var i in this.asteroids) {
       var asteroid = this.asteroids[i];
@@ -180,6 +201,7 @@ Game.prototype = {
             && Math.abs(bullet.position.y - asteroid.position.y) < asteroid.size/2) {
           bullet.die();
           this.spawnAsteroidChildren(asteroid);
+          this.score += this.asteroidScore * (3 - asteroid.stage);
           asteroid.die();
         }
       }
@@ -188,6 +210,7 @@ Game.prototype = {
         if (Math.abs(this.ship.position.x - asteroid.position.x) < asteroid.size/2
             && Math.abs(this.ship.position.y - asteroid.position.y) < asteroid.size/2) {
           this.killShip();
+          this.spawnAsteroidChildren(asteroid);
           asteroid.die();
         }
       }
