@@ -1,10 +1,12 @@
-var Asteroid = function(position, angle, id) {
+var Asteroid = function(position, angle, stage, id) {
   this.position = { x: position.x, y: position.y };
-  this.speed = 10;
+  this.speed = 20;
+  this.stage = stage;
   this.velocity = this.setVel(angle);
   this.id = id;
 
-  this.size = 5;
+
+  this.size = 3 + 2 * this.stage;
   this.color = '#ccc';
 }
 
@@ -27,8 +29,8 @@ Asteroid.prototype = {
 
   setVel: function(angle) {
     return {
-      x: this.speed * Math.cos(PI * angle / 180),
-      y: -this.speed * Math.sin(PI * angle / 180)
+      x: (this.speed - 5 * this.stage) * Math.cos(PI * angle / 180),
+      y: -(this.speed - 5 * this.stage) * Math.sin(PI * angle / 180)
     }
   },
 

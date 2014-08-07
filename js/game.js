@@ -89,7 +89,6 @@ Game.prototype = {
   },
 
   listen: function() {
-
     this.shipListen();
     window.addEventListener('bulletDeath', this.killBullet.bind(this));
     window.addEventListener('asteroidDeath', this.killAsteroid.bind(this));
@@ -149,19 +148,14 @@ Game.prototype = {
     }
   },
 
-  spawnAsteroid: function(position, angle) {
-    this.asteroids.push(new Asteroid(position, angle, this.asteroidId++));
+  spawnAsteroid: function(position, angle, stage) {
+    this.asteroids.push(new Asteroid(position, angle, stage, this.asteroidId++));
   },
 
-  startLevel: function(num) {
-    this.levelStarting = false;
-    for (var i = 0; i < num; i++) {
-      var position = {
-        x: this.width/2,
-        y: Math.floor(this.height * (Math.random() - 0.5))
-      }
-      var angle = 360 * Math.random();
-      this.spawnAsteroid(position, angle);
+  spawnAsteroidChildren: function(asteroid) {
+    if (asteroid.stage > 0) {
+      this.spawnAsteroid(asteroid.position, 360 * Math.random(), asteroid.stage - 1);
+      this.spawnAsteroid(asteroid.position, 360 * Math.random(), asteroid.stage - 1);
     }
   },
 
@@ -185,10 +179,10 @@ Game.prototype = {
         if (Math.abs(bullet.position.x - asteroid.position.x) < asteroid.size/2
             && Math.abs(bullet.position.y - asteroid.position.y) < asteroid.size/2) {
           bullet.die();
+          this.spawnAsteroidChildren(asteroid);
           asteroid.die();
         }
       }
-
       // Asteroids and ship
       if (this.ship) {
         if (Math.abs(this.ship.position.x - asteroid.position.x) < asteroid.size/2
@@ -197,6 +191,18 @@ Game.prototype = {
           asteroid.die();
         }
       }
+    }
+  },
+
+  startLevel: function(num) {
+    this.levelStarting = false;
+    for (var i = 0; i < num; i++) {
+      var position = {
+        x: this.width/2,
+        y: Math.floor(this.height * (Math.random() - 0.5))
+      }
+      var angle = 360 * Math.random();
+      this.spawnAsteroid(position, angle, 2);
     }
   }
 }
