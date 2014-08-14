@@ -20,6 +20,7 @@ KeyboardInputManager.prototype = {
 
   keydown: function(e) {
     if (this.eventmap[e.which]) {
+      e.preventDefault();
       window.dispatchEvent(new Event(this.eventmap[e.which] + 'Press'));
     }
   },
