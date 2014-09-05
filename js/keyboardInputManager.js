@@ -8,7 +8,7 @@ var KeyboardInputManager = function() {
     40: 'down',
     68: 'right',
     39: 'right',
-    32: 'shoot',
+    32: 'shoot'
   }
 }
 
@@ -19,6 +19,7 @@ KeyboardInputManager.prototype = {
   },
 
   keydown: function(e) {
+    console.log(e.which);
     if (this.eventmap[e.which]) {
       e.preventDefault();
       window.dispatchEvent(new Event(this.eventmap[e.which] + 'Press'));

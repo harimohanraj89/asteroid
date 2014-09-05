@@ -98,12 +98,22 @@ Game.prototype = {
     this.spawnShip();
     this.score = 0;
     this.lives = 3;
+    this.level = 0;
+    this.gameOver = false;
+  },
+
+  restartGame: function() {
+    if (this.gameOver) {
+      this.clearSpace();
+      this.newGame();
+    }
   },
 
   listen: function() {
     this.shipListen();
     window.addEventListener('bulletDeath', this.killBullet.bind(this));
     window.addEventListener('asteroidDeath', this.killAsteroid.bind(this));
+    window.addEventListener('shootPress', this.restartGame.bind(this));
   },
 
   shipListen: function() {
@@ -115,6 +125,11 @@ Game.prototype = {
     window.addEventListener('rightRelease', this.ship.rotRightOff.bind(this.ship));
     window.addEventListener('shootPress', this.shoot.bind(this));
     window.addEventListener('shootRelease', (function() { this.shooting = false }).bind(this));
+  },
+
+  clearSpace: function() {
+    this.asteroids = [];
+    this.bullets = [];
   },
 
   spawnShip: function() {
