@@ -205,31 +205,48 @@ Game.prototype = {
     return Math.min(level + 2, 8);
   },
 
+  addAsteroidScore: function(stage) {
+    this.score += this.asteroidScore * (3 - stage);
+  },
+
   detectCollisions: function() {
     for (var i in this.asteroids) {
       var asteroid = this.asteroids[i];
 
-      // Asteroids and bullets
       for (var j in this.bullets) {
         var bullet = this.bullets[j];
-        if (Math.abs(bullet.position.x - asteroid.position.x) < asteroid.size/2
-            && Math.abs(bullet.position.y - asteroid.position.y) < asteroid.size/2) {
-          bullet.die();
-          this.spawnAsteroidChildren(asteroid);
-          this.score += this.asteroidScore * (3 - asteroid.stage);
-          asteroid.die();
-        }
+
+        this.detectAsteroidBulletCollision(asteroid, bullet);
       }
-      // Asteroids and ship
-      if (this.ship) {
-        if (Math.abs(this.ship.position.x - asteroid.position.x) < asteroid.size/2
-            && Math.abs(this.ship.position.y - asteroid.position.y) < asteroid.size/2) {
-          this.killShip();
-          this.spawnAsteroidChildren(asteroid);
-          asteroid.die();
-        }
-      }
+      this.detectShipAsteroidCollision(asteroid);
     }
+  },
+
+  detectAsteroidBulletCollision: function(asteroid, bullet) {
+    if (this.asteroidBulletOverlapping(asteroid, bullet)) {
+      bullet.die();
+      this.spawnAsteroidChildren(asteroid);
+      this.addAsteroidScore(asteroid.stage);
+      asteroid.die();
+    }
+  },
+
+  detectShipAsteroidCollision: function(asteroid) {
+    if (this.ship && this.shipAsteroidOverlapping(this.ship, asteroid)) {
+      this.killShip();
+      this.spawnAsteroidChildren(asteroid);
+      asteroid.die();
+    }
+  },
+
+  asteroidBulletOverlapping: function(asteroid, bullet) {
+    return (Math.abs(bullet.position.x - asteroid.position.x) < asteroid.size/2
+    && Math.abs(bullet.position.y - asteroid.position.y) < asteroid.size/2);
+  },
+
+  shipAsteroidOverlapping: function(ship, asteroid) {
+    return (Math.abs(ship.position.x - asteroid.position.x) < asteroid.size/2
+    && Math.abs(ship.position.y - asteroid.position.y) < asteroid.size/2);
   },
 
   startLevel: function(num) {
