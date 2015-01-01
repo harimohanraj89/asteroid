@@ -6,6 +6,7 @@ window.onload = function() {
     inputMgr: new KeyboardInputManager(),
     actuator: new CanvasActuator(document.getElementById('game-canvas')),
     collider: new Collider(),
+    controller: new DomController(),
     stars: new Stars()
   });
   game.tick();

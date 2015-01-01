@@ -2,6 +2,7 @@ var Game = function(config) {
   this.inputMgr = config.inputMgr;
   this.actuator = config.actuator;
   this.collider = config.collider;
+  this.controller = config.controller;
 
   this.width = 100;
   this.height = 75;
@@ -32,7 +33,7 @@ var Game = function(config) {
   this.stars.spawn(50, this.width, this.height);
 
   this.inputMgr.init();
-  this.listen();
+  this.registerControls(this.controller);
   this.initCollider();
 }
 
@@ -123,22 +124,22 @@ Game.prototype = {
     }
   },
 
-  listen: function() {
-    this.shipListen();
-    window.addEventListener('bulletDeath', this.killBullet.bind(this));
-    window.addEventListener('asteroidDeath', this.killAsteroid.bind(this));
-    window.addEventListener('shootPress', this.restartGame.bind(this));
+  registerControls: function(controller) {
+    this.registerShipControls(controller);
+    controller.register('bulletDeath', this.killBullet, this);
+    controller.register('asteroidDeath', this.killAsteroid, this);
+    controller.register('shootPress', this.restartGame, this);
   },
 
-  shipListen: function() {
-    window.addEventListener('upPress', this.ship.thrustOn.bind(this.ship));
-    window.addEventListener('leftPress', this.ship.rotLeftOn.bind(this.ship));
-    window.addEventListener('rightPress', this.ship.rotRightOn.bind(this.ship));
-    window.addEventListener('upRelease', this.ship.thrustOff.bind(this.ship));
-    window.addEventListener('leftRelease', this.ship.rotLeftOff.bind(this.ship));
-    window.addEventListener('rightRelease', this.ship.rotRightOff.bind(this.ship));
-    window.addEventListener('shootPress', this.shoot.bind(this));
-    window.addEventListener('shootRelease', (function() { this.shooting = false }).bind(this));
+  registerShipControls: function(controller) {
+    controller.register('upPress', this.ship.thrustOn, this.ship);
+    controller.register('leftPress', this.ship.rotLeftOn, this.ship);
+    controller.register('rightPress', this.ship.rotRightOn, this.ship);
+    controller.register('upRelease', this.ship.thrustOff, this.ship);
+    controller.register('leftRelease', this.ship.rotLeftOff, this.ship);
+    controller.register('rightRelease', this.ship.rotRightOff, this.ship);
+    controller.register('shootPress', this.shoot, this);
+    controller.register('shootRelease', (function() { this.shooting = false }), this);
   },
 
   clearSpace: function() {
@@ -154,7 +155,7 @@ Game.prototype = {
 
   spawnShip: function() {
     this.ship = this.newShip()
-    this.shipListen();
+    this.registerShipControls(this.controller);
     this.respawning = false;
   },
 

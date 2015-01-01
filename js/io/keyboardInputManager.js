@@ -19,7 +19,6 @@ KeyboardInputManager.prototype = {
   },
 
   keydown: function(e) {
-    console.log(e.which);
     if (this.eventmap[e.which]) {
       e.preventDefault();
       window.dispatchEvent(new Event(this.eventmap[e.which] + 'Press'));
