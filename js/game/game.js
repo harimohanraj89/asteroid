@@ -148,8 +148,12 @@ Game.prototype = {
 
   // Ship Management
 
+  newShip: function() {
+    return new Ship();
+  },
+
   spawnShip: function() {
-    this.ship = new Ship();
+    this.ship = this.newShip()
     this.shipListen();
     this.respawning = false;
   },
