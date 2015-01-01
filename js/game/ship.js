@@ -123,5 +123,14 @@ Ship.prototype = {
 
   startCooldown: function() {
     this.cooldownTime = this.cooldownMaxTime;
+  },
+
+  registerControls: function(controller) {
+    controller.register('upPress', this.thrustOn, this);
+    controller.register('leftPress', this.rotLeftOn, this);
+    controller.register('rightPress', this.rotRightOn, this);
+    controller.register('upRelease', this.thrustOff, this);
+    controller.register('leftRelease', this.rotLeftOff, this);
+    controller.register('rightRelease', this.rotRightOff, this);
   }
 }

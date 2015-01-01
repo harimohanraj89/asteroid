@@ -125,21 +125,17 @@ Game.prototype = {
   },
 
   registerControls: function(controller) {
-    this.registerShipControls(controller);
     controller.register('bulletDeath', this.killBullet, this);
     controller.register('asteroidDeath', this.killAsteroid, this);
     controller.register('shootPress', this.restartGame, this);
+    controller.register('shootPress', this.shoot, this);
+    controller.register('shootRelease', (function() { this.shooting = false }), this);
+    
+    this.registerShipControls(controller);
   },
 
   registerShipControls: function(controller) {
-    controller.register('upPress', this.ship.thrustOn, this.ship);
-    controller.register('leftPress', this.ship.rotLeftOn, this.ship);
-    controller.register('rightPress', this.ship.rotRightOn, this.ship);
-    controller.register('upRelease', this.ship.thrustOff, this.ship);
-    controller.register('leftRelease', this.ship.rotLeftOff, this.ship);
-    controller.register('rightRelease', this.ship.rotRightOff, this.ship);
-    controller.register('shootPress', this.shoot, this);
-    controller.register('shootRelease', (function() { this.shooting = false }), this);
+    this.ship.registerControls(this.controller);
   },
 
   clearSpace: function() {
