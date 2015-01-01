@@ -4,8 +4,6 @@ var Asteroid = function(position, angle, stage, id) {
   this.stage = stage;
   this.velocity = this.setVel(angle);
   this.id = id;
-
-  // this.size = 3 + 2 * this.stage;
   this.color = '#ccc';
 }
 
