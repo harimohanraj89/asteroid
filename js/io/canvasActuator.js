@@ -108,7 +108,7 @@ CanvasActuator.prototype = {
 
   drawAsteroid: function(asteroid, width, height) {
     var cPosition = this.displayCoords(asteroid.position, width, height);
-    var cSize = this.C * asteroid.size;
+    var cSize = this.C * asteroid.size();
     this.context.save();
     this.context.strokeStyle = asteroid.color;
     this.context.strokeRect(cPosition.x - cSize/2, cPosition.y - cSize/2, cSize, cSize);

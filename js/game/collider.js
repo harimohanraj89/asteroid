@@ -36,12 +36,12 @@ Collider.prototype = {
   },
 
   asteroidBulletOverlapping: function(asteroid, bullet) {
-    return (Math.abs(bullet.position.x - asteroid.position.x) < asteroid.size/2
-    && Math.abs(bullet.position.y - asteroid.position.y) < asteroid.size/2);
+    return (Math.abs(bullet.x() - asteroid.x()) < asteroid.size()/2
+    && Math.abs(bullet.y() - asteroid.y()) < asteroid.size()/2);
   },
 
   shipAsteroidOverlapping: function(ship, asteroid) {
-    return (Math.abs(ship.position.x - asteroid.position.x) < asteroid.size/2
-    && Math.abs(ship.position.y - asteroid.position.y) < asteroid.size/2);
+    return (Math.abs(ship.x() - asteroid.x()) < asteroid.size()/2
+    && Math.abs(ship.y() - asteroid.y()) < asteroid.size()/2);
   }
 };

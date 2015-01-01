@@ -51,6 +51,14 @@ Ship.prototype = {
     this.rotLeft = false;
   },
 
+  x: function() {
+    return this.position.x;
+  },
+
+  y: function() {
+    return this.position.y;
+  },
+
   gunPosition: function() {
     return {
       x: this.position.x + Math.cos(PI * this.angle / 180),

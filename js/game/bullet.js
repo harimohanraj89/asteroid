@@ -11,6 +11,14 @@ var Bullet = function(position, angle, id) {
 }
 
 Bullet.prototype = {
+  x: function() {
+    return this.position.x;
+  },
+
+  y: function() {
+    return this.position.y;
+  },
+
   wrapPosition: function(width, height) {
     while (this.position.x > width/2) this.position.x -= width;
     while (this.position.x < -width/2) this.position.x += width;

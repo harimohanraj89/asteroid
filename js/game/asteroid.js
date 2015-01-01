@@ -5,12 +5,23 @@ var Asteroid = function(position, angle, stage, id) {
   this.velocity = this.setVel(angle);
   this.id = id;
 
-
-  this.size = 3 + 2 * this.stage;
+  // this.size = 3 + 2 * this.stage;
   this.color = '#ccc';
 }
 
 Asteroid.prototype = {
+  size: function() {
+    return (3 + 2 * this.stage);
+  },
+
+  x: function() {
+    return this.position.x;
+  },
+
+  y: function() {
+    return this.position.y;
+  },
+
   wrapPosition: function(width, height) {
     while (this.position.x > width/2) this.position.x -= width;
     while (this.position.x < -width/2) this.position.x += width;
