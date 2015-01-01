@@ -1,7 +1,7 @@
-var Game = function(inputMgr, actuator, collider) {
-  this.inputMgr = inputMgr;
-  this.actuator = actuator;
-  this.collider = collider;
+var Game = function(config) {
+  this.inputMgr = config.inputMgr;
+  this.actuator = config.actuator;
+  this.collider = config.collider;
 
   this.width = 100;
   this.height = 75;
