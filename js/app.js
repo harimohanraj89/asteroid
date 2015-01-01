@@ -5,7 +5,8 @@ window.onload = function() {
   var game = new Game({
     inputMgr: new KeyboardInputManager(),
     actuator: new CanvasActuator(document.getElementById('game-canvas')),
-    collider: new Collider()
+    collider: new Collider(),
+    stars: new Stars()
   });
   game.tick();
 }

@@ -6,7 +6,7 @@ var Game = function(config) {
   this.width = 100;
   this.height = 75;
 
-  this.stars = new Stars();
+  this.stars = config.stars;
 
   this.bullets = [];
   this.maxBullets = 6;
