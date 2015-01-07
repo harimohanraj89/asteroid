@@ -27,12 +27,17 @@ Asteroid.prototype = {
     while (this.position.y < -height/2) this.position.y += height;
   },
 
-  update: function(dt, width, height) {
+  updatePosition: function(dt) {
     var dx = this.velocity.x * dt / 1000;
     var dy = this.velocity.y * dt / 1000;
 
     this.position.x += dx;
     this.position.y += dy;
+    return { dx: dx, dy: dy };
+  },
+
+  update: function(dt, width, height) {
+    this.updatePosition(dt);
     this.wrapPosition(width, height);
   },
 

@@ -26,15 +26,23 @@ Bullet.prototype = {
     while (this.position.y < -height/2) this.position.y += height;
   },
 
-  update: function(dt, width, height) {
+  updatePosition: function(dt) {
     var dx = this.velocity.x * dt / 1000;
     var dy = this.velocity.y * dt / 1000;
 
     this.position.x += dx;
     this.position.y += dy;
-    this.wrapPosition(width, height);
+    return { dx: dx, dy: dy };
+  },
 
-    this.distance += Math.sqrt(dx*dx + dy*dy);
+  update: function(dt, width, height) {
+    var deltas = this.updatePosition(dt);
+    this.wrapPosition(width, height);
+    this.checkDeath(deltas);
+  },
+
+  checkDeath: function(deltas) {
+    this.distance += Math.sqrt(deltas.dx*deltas.dx + deltas.dy*deltas.dy);
     if (this.distance > this.maxDistance) {
       this.die();
     }

@@ -73,27 +73,31 @@ Ship.prototype = {
     while (this.position.y < -height/2) this.position.y += height;
   },
 
+  updatePosition: function(dt) {
+    var dx = this.velocity.x * dt / 1000;
+    var dy = this.velocity.y * dt / 1000;
+
+    this.position.x += dx;
+    this.position.y += dy;
+    return { dx: dx, dy: dy };
+  },
+
+  update: function(dt, width, height) {
+    this.updatePosition(dt);
+    this.wrapPosition(width, height);
+    this.updateVelocity(dt);
+    this.updateRotation(dt);
+    this.limitVelocity();
+    this.updateCooldown(dt);
+    this.updateFlame(dt);
+  },
+
   limitVelocity: function() {
     var speed = Math.sqrt(this.velocity.x * this.velocity.x + this.velocity.y * this.velocity.y);
     if (speed > this.maxSpeed) {
       this.velocity.x *= this.maxSpeed / speed;
       this.velocity.y *= this.maxSpeed / speed;
     }
-  },
-
-  update: function(dt, width, height) {
-    this.updatePosition(dt);
-    this.updateVelocity(dt);
-    this.updateRotation(dt);
-    this.limitVelocity();
-    this.wrapPosition(width, height);
-    this.updateCooldown(dt);
-    this.updateFlame(dt);
-  },
-
-  updatePosition: function(dt) {
-    this.position.x += this.velocity.x * dt / 1000;
-    this.position.y += this.velocity.y * dt / 1000;
   },
 
   updateVelocity: function(dt) {
