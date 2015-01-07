@@ -82,14 +82,26 @@ Ship.prototype = {
     return { dx: dx, dy: dy };
   },
 
+  beforeUpdate: function() {},
+
   update: function(dt, width, height) {
-    this.updatePosition(dt);
+    this.beforeUpdate();
+    var deltas = this.updatePosition(dt);
     this.wrapPosition(width, height);
-    this.updateVelocity(dt);
-    this.updateRotation(dt);
+    this.afterUpdate({
+      dt: dt,
+      width: width,
+      height: height,
+      deltas: deltas
+    });
+  },
+
+  afterUpdate: function(info) {
+    this.updateVelocity(info.dt);
+    this.updateRotation(info.dt);
     this.limitVelocity();
-    this.updateCooldown(dt);
-    this.updateFlame(dt);
+    this.updateCooldown(info.dt);
+    this.updateFlame(info.dt);
   },
 
   limitVelocity: function() {

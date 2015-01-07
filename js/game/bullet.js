@@ -35,10 +35,22 @@ Bullet.prototype = {
     return { dx: dx, dy: dy };
   },
 
+  beforeUpdate: function() {},
+
   update: function(dt, width, height) {
+    this.beforeUpdate();
     var deltas = this.updatePosition(dt);
     this.wrapPosition(width, height);
-    this.checkDeath(deltas);
+    this.afterUpdate({
+      dt: dt,
+      width: width,
+      height: height,
+      deltas: deltas
+    });
+  },
+
+  afterUpdate: function(info) {
+    this.checkDeath(info.deltas)
   },
 
   checkDeath: function(deltas) {

@@ -36,6 +36,10 @@ Asteroid.prototype = {
     return { dx: dx, dy: dy };
   },
 
+  beforeUpdate: function() {},
+
+  afterUpdate: function() {},
+
   update: function(dt, width, height) {
     this.updatePosition(dt);
     this.wrapPosition(width, height);
