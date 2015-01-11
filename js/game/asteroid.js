@@ -5,7 +5,7 @@ var Asteroid = function(position, angle, stage, id) {
   this.velocity = this.setVel(angle);
   this.id = id;
   this.color = '#ccc';
-};
+}
 
 Asteroid.prototype.size = function() {
   return (3 + 2 * this.stage);
@@ -26,12 +26,21 @@ Asteroid.prototype.wrapPosition = function(width, height) {
   while (this.position.y < -height/2) this.position.y += height;
 };
 
-Asteroid.prototype.update = function(dt, width, height) {
+Asteroid.prototype.updatePosition = function(dt) {
   var dx = this.velocity.x * dt / 1000;
   var dy = this.velocity.y * dt / 1000;
 
   this.position.x += dx;
   this.position.y += dy;
+  return { dx: dx, dy: dy };
+};
+
+Asteroid.prototype.beforeUpdate = function() {};
+
+Asteroid.prototype.afterUpdate = function() {};
+
+Asteroid.prototype.update = function(dt, width, height) {
+  this.updatePosition(dt);
   this.wrapPosition(width, height);
 };
 

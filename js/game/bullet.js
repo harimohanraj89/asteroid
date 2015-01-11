@@ -10,6 +10,7 @@ var Bullet = function(position, angle, id) {
   this.color = '#fff';
 };
 
+
 Bullet.prototype.x = function() {
   return this.position.x;
 };
@@ -25,15 +26,35 @@ Bullet.prototype.wrapPosition = function(width, height) {
   while (this.position.y < -height/2) this.position.y += height;
 };
 
-Bullet.prototype.update = function(dt, width, height) {
+Bullet.prototype.updatePosition = function(dt) {
   var dx = this.velocity.x * dt / 1000;
   var dy = this.velocity.y * dt / 1000;
 
   this.position.x += dx;
   this.position.y += dy;
-  this.wrapPosition(width, height);
+  return { dx: dx, dy: dy };
+};
 
-  this.distance += Math.sqrt(dx*dx + dy*dy);
+Bullet.prototype.beforeUpdate = function() {};
+
+Bullet.prototype.update = function(dt, width, height) {
+  this.beforeUpdate();
+  var deltas = this.updatePosition(dt);
+  this.wrapPosition(width, height);
+  this.afterUpdate({
+    dt: dt,
+    width: width,
+    height: height,
+    deltas: deltas
+  });
+};
+
+Bullet.prototype.afterUpdate = function(info) {
+  this.checkDeath(info.deltas)
+};
+
+Bullet.prototype.checkDeath = function(deltas) {
+  this.distance += Math.sqrt(deltas.dx*deltas.dx + deltas.dy*deltas.dy);
   if (this.distance > this.maxDistance) {
     this.die();
   }
