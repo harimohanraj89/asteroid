@@ -76,8 +76,8 @@ Ship.prototype.limitVelocity = function() {
 
 Ship.prototype.updateVelocity = function(dt) {
   if (this.thrust) {
-    this.velocity.x += this.thrustPower * Math.cos(PI * this.angle / 180) * dt / 1000;
-    this.velocity.y -= this.thrustPower * Math.sin(PI * this.angle / 180) * dt / 1000;
+    this.plusVx(this.thrustPower * Math.cos(PI * this.angle / 180) * dt / 1000);
+    this.plusVy(-this.thrustPower * Math.sin(PI * this.angle / 180) * dt / 1000);
   }
 };
 

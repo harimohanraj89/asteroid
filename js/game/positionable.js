@@ -3,6 +3,11 @@ var Positionable = {
     position: {
       x: 0,
       y: 0
+    },
+
+    velocity: {
+      x: 0,
+      y: 0
     }
   },
 
@@ -15,19 +20,51 @@ var Positionable = {
       return this.position.y;
     },
 
+    setX: function(x) {
+      this.position.x = x;
+    },
+
+    setY: function(y) {
+      this.position.y = y;
+    },
+
+    plusX: function(dx) {
+      this.position.x += dx;
+    },
+
+    plusY: function(dy) {
+      this.position.y += dy;
+    },
+
+    vx: function() {
+      return this.velocity.x;
+    },
+
+    vy: function() {
+      return this.velocity.y;
+    },
+
+    plusVx: function(dVx) {
+      this.velocity.x += dVx;
+    },
+
+    plusVy: function(dVy) {
+      this.velocity.y += dVy;
+    },
+
     wrapPosition: function(width, height) {
-      while (this.position.x > width/2) this.position.x -= width;
-      while (this.position.x < -width/2) this.position.x += width;
-      while (this.position.y > height/2) this.position.y -= height;
-      while (this.position.y < -height/2) this.position.y += height;
+      while (this.x() > width/2) this.plusX(-width);
+      while (this.x() < -width/2) this.plusX(width);
+      while (this.y() > height/2) this.plusY(-height);
+      while (this.y() < -height/2) this.plusY(height);
     },
 
     updatePosition: function(dt) {
-      var dx = this.velocity.x * dt / 1000;
-      var dy = this.velocity.y * dt / 1000;
+      var dx = this.vx() * dt / 1000;
+      var dy = this.vy() * dt / 1000;
 
-      this.position.x += dx;
-      this.position.y += dy;
+      this.plusX(dx);
+      this.plusY(dy);
       return { dx: dx, dy: dy };
     },
 
