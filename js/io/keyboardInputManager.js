@@ -10,24 +10,22 @@ var KeyboardInputManager = function() {
     39: 'right',
     32: 'shoot'
   }
-}
+};
 
-KeyboardInputManager.prototype = {
-  init: function() {
-    window.addEventListener('keydown', this.keydown.bind(this));
-    window.addEventListener('keyup', this.keyup.bind(this));
-  },
+KeyboardInputManager.prototype.init = function() {
+  window.addEventListener('keydown', this.keydown.bind(this));
+  window.addEventListener('keyup', this.keyup.bind(this));
+};
 
-  keydown: function(e) {
-    if (this.eventmap[e.which]) {
-      e.preventDefault();
-      window.dispatchEvent(new Event(this.eventmap[e.which] + 'Press'));
-    }
-  },
-
-  keyup: function(e) {
-    if (this.eventmap[e.which]) {
-      window.dispatchEvent(new Event(this.eventmap[e.which] + 'Release'));
-    }
+KeyboardInputManager.prototype.keydown = function(e) {
+  if (this.eventmap[e.which]) {
+    e.preventDefault();
+    window.dispatchEvent(new Event(this.eventmap[e.which] + 'Press'));
   }
-}
+};
+
+KeyboardInputManager.prototype.keyup = function(e) {
+  if (this.eventmap[e.which]) {
+    window.dispatchEvent(new Event(this.eventmap[e.which] + 'Release'));
+  }
+};
