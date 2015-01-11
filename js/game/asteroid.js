@@ -7,41 +7,10 @@ var Asteroid = function(position, angle, stage, id) {
   this.color = '#ccc';
 }
 
+Util.includeBehavior(Asteroid, Positionable);
+
 Asteroid.prototype.size = function() {
   return (3 + 2 * this.stage);
-};
-
-Asteroid.prototype.x = function() {
-  return this.position.x;
-};
-
-Asteroid.prototype.y = function() {
-  return this.position.y;
-};
-
-Asteroid.prototype.wrapPosition = function(width, height) {
-  while (this.position.x > width/2) this.position.x -= width;
-  while (this.position.x < -width/2) this.position.x += width;
-  while (this.position.y > height/2) this.position.y -= height;
-  while (this.position.y < -height/2) this.position.y += height;
-};
-
-Asteroid.prototype.updatePosition = function(dt) {
-  var dx = this.velocity.x * dt / 1000;
-  var dy = this.velocity.y * dt / 1000;
-
-  this.position.x += dx;
-  this.position.y += dy;
-  return { dx: dx, dy: dy };
-};
-
-Asteroid.prototype.beforeUpdate = function() {};
-
-Asteroid.prototype.afterUpdate = function() {};
-
-Asteroid.prototype.update = function(dt, width, height) {
-  this.updatePosition(dt);
-  this.wrapPosition(width, height);
 };
 
 Asteroid.prototype.setVel = function(angle) {

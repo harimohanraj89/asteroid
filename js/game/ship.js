@@ -21,6 +21,8 @@ var Ship = function() {
   this.size = 2;
 };
 
+Util.includeBehavior(Ship, Positionable);
+
 Ship.prototype.thrustOn = function() {
   if (!this.thrust) {
     this.flameTime = 0;
@@ -49,49 +51,11 @@ Ship.prototype.rotLeftOff = function() {
   this.rotLeft = false;
 };
 
-Ship.prototype.x = function() {
-  return this.position.x;
-};
-
-Ship.prototype.y = function() {
-  return this.position.y;
-};
-
 Ship.prototype.gunPosition = function() {
   return {
     x: this.position.x + Math.cos(PI * this.angle / 180),
     y: this.position.y - Math.sin(PI * this.angle / 180)
   }
-};
-
-Ship.prototype.wrapPosition = function(width, height) {
-  while (this.position.x > width/2) this.position.x -= width;
-  while (this.position.x < -width/2) this.position.x += width;
-  while (this.position.y > height/2) this.position.y -= height;
-  while (this.position.y < -height/2) this.position.y += height;
-};
-
-Ship.prototype.updatePosition = function(dt) {
-  var dx = this.velocity.x * dt / 1000;
-  var dy = this.velocity.y * dt / 1000;
-
-  this.position.x += dx;
-  this.position.y += dy;
-  return { dx: dx, dy: dy };
-};
-
-Ship.prototype.beforeUpdate = function() {};
-
-Ship.prototype.update = function(dt, width, height) {
-  this.beforeUpdate();
-  var deltas = this.updatePosition(dt);
-  this.wrapPosition(width, height);
-  this.afterUpdate({
-    dt: dt,
-    width: width,
-    height: height,
-    deltas: deltas
-  });
 };
 
 Ship.prototype.afterUpdate = function(info) {

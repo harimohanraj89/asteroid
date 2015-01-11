@@ -10,44 +10,7 @@ var Bullet = function(position, angle, id) {
   this.color = '#fff';
 };
 
-
-Bullet.prototype.x = function() {
-  return this.position.x;
-};
-
-Bullet.prototype.y = function() {
-  return this.position.y;
-};
-
-Bullet.prototype.wrapPosition = function(width, height) {
-  while (this.position.x > width/2) this.position.x -= width;
-  while (this.position.x < -width/2) this.position.x += width;
-  while (this.position.y > height/2) this.position.y -= height;
-  while (this.position.y < -height/2) this.position.y += height;
-};
-
-Bullet.prototype.updatePosition = function(dt) {
-  var dx = this.velocity.x * dt / 1000;
-  var dy = this.velocity.y * dt / 1000;
-
-  this.position.x += dx;
-  this.position.y += dy;
-  return { dx: dx, dy: dy };
-};
-
-Bullet.prototype.beforeUpdate = function() {};
-
-Bullet.prototype.update = function(dt, width, height) {
-  this.beforeUpdate();
-  var deltas = this.updatePosition(dt);
-  this.wrapPosition(width, height);
-  this.afterUpdate({
-    dt: dt,
-    width: width,
-    height: height,
-    deltas: deltas
-  });
-};
+Util.includeBehavior(Bullet, Positionable);
 
 Bullet.prototype.afterUpdate = function(info) {
   this.checkDeath(info.deltas)
