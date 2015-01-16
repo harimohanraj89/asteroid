@@ -8,39 +8,29 @@ var Bullet = function(position, angle, id) {
   this.maxDistance = 80;
   this.size = 0.5;
   this.color = '#fff';
-}
+};
 
-Bullet.prototype = {
-  wrapPosition: function(width, height) {
-    while (this.position.x > width/2) this.position.x -= width;
-    while (this.position.x < -width/2) this.position.x += width;
-    while (this.position.y > height/2) this.position.y -= height;
-    while (this.position.y < -height/2) this.position.y += height;
-  },
+Util.includeBehavior(Bullet, Positionable);
 
-  update: function(dt, width, height) {
-    var dx = this.velocity.x * dt / 1000;
-    var dy = this.velocity.y * dt / 1000;
+Bullet.prototype.afterUpdate = function(info) {
+  this.checkDeath(info.deltas)
+};
 
-    this.position.x += dx;
-    this.position.y += dy;
-    this.wrapPosition(width, height);
-
-    this.distance += Math.sqrt(dx*dx + dy*dy);
-    if (this.distance > this.maxDistance) {
-      this.die();
-    }
-  },
-
-  setVel: function(angle) {
-    return {
-      x: this.speed * Math.cos(PI * angle / 180),
-      y: -this.speed * Math.sin(PI * angle / 180)
-    }
-  },
-
-  die: function() {
-    var bulletDeath = new CustomEvent('bulletDeath', { 'detail': this.id });
-    dispatchEvent(bulletDeath);
+Bullet.prototype.checkDeath = function(deltas) {
+  this.distance += Math.sqrt(deltas.dx*deltas.dx + deltas.dy*deltas.dy);
+  if (this.distance > this.maxDistance) {
+    this.die();
   }
-}
+};
+
+Bullet.prototype.setVel = function(angle) {
+  return {
+    x: this.speed * Math.cos(PI * angle / 180),
+    y: -this.speed * Math.sin(PI * angle / 180)
+  }
+};
+
+Bullet.prototype.die = function() {
+  var bulletDeath = new CustomEvent('bulletDeath', { 'detail': this.id });
+  dispatchEvent(bulletDeath);
+};
