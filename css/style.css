@@ -6,6 +6,10 @@ body {
   color: firebrick;
 }
 
+a {
+  color: firebrick;
+}
+
 .info {
   color: #ccc;
 }
